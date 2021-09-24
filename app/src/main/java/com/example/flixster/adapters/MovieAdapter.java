@@ -1,20 +1,26 @@
 package com.example.flixster.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.flixster.DetailActivity;
 import com.example.flixster.Models.Movie;
 import com.example.flixster.R;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -69,6 +75,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     //establish a new viewholder class that will extend to the recycler viewholder + complete constructor
     //viewholder is a representation of our row in the recycler view (contents inside item_movie.xml)
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        //pull references to the relative layout:
+        RelativeLayout container;
+
         TextView tvTitle;
         TextView tvOverview;
         ImageView IvPoster;
@@ -80,6 +90,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvOverview = itemView.findViewById(R.id.tvOverview);
             IvPoster = itemView.findViewById(R.id.IvPoster);
+            //pulling references to the relative layout continue...
+            container = itemView.findViewById(R.id.container);
         }
 
         public void bind(Movie movie) {
@@ -99,6 +111,32 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             //to render an image we will use a library called Glide (offered by codepath)
             //load the URL into a particular view, into the IvPoster
             Glide.with(context).load(imageUrl).into(IvPoster);
+
+            //Click button on movie title:
+            //Let's set an setOnClicklistener button on our movie container so that we can initialize the intent
+            //new is used to create an instance of an object that has a constructor function
+            //1. Register click listener on the whole row
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //2. Navigate to a new activity on tap using intent
+                    Intent i = new Intent(context, DetailActivity.class);
+                    //pass data onto the startActivity...
+                    /*i.putExtra("title", movie.getTitle());*/
+                    i.putExtra("movie", Parcels.wrap(movie));
+                    context.startActivity(i);
+
+                    /* WE DON'T NEED TOAST ANYMORE...
+                    //to make sure that this is working let's make a toast
+                    //let's make it short, we don't want the message to appear long
+                    //Toast.makeText(context,"", Toast.LENGTH_SHORT).show(); //.show to show it
+                    //^^instead of a message let's change it to show the movie title...
+                    Toast.makeText(context, movie.getTitle(), Toast.LENGTH_SHORT).show(); //get title to get the movie title...*/
+
+
+
+                }
+            });
         }
     }
 }
